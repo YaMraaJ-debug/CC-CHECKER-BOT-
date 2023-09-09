@@ -1,0 +1,7 @@
+pip install virtualenv
+
+virtualenv env
+#source env/bin/activate # if linux or MAC
+env\Scripts\activate
+pip install -r requirements.txt
+python3 -m jocasta

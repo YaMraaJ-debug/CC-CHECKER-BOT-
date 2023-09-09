@@ -1,0 +1,17 @@
+------WebKitFormBoundary7xxGPTu9qqAxyonX
+Content-Disposition: form-data; name="form_type"
+
+product
+------WebKitFormBoundary7xxGPTu9qqAxyonX
+Content-Disposition: form-data; name="utf8"
+
+✓
+------WebKitFormBoundary7xxGPTu9qqAxyonX
+Content-Disposition: form-data; name="id"
+
+39553745453141
+------WebKitFormBoundary7xxGPTu9qqAxyonX
+Content-Disposition: form-data; name="quantity"
+
+1
+------WebKitFormBoundary7xxGPTu9qqAxyonX--

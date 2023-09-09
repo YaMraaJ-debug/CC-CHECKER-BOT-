@@ -1,0 +1,24 @@
+
+API_ID: 12345678 #https://my.telegram.org/
+API_HASH: ''  #https://my.telegram.org/
+
+BOT_TOKEN: '2117071565:' #@botfather
+
+STRING_SESSION: '' #python3 session_gen.py
+
+MONGO_URL: ''
+MONGO_DB: 'bot' # leave this as it is or change from services/mongo.py this change here. 
+
+REDIS_URI: '127.0.0.1'
+REDIS_PORT: 6379
+REDIS_PASS: ''
+
+SUPPORT_CHAT: -1001549685862 # send live ccs to here must add bot and make bot admin.
+LOG_CHAT: -1001549685862  # send live ccs to here must add bot and make bot admin.
+OWNER_ID: 1317173146 #Owner its
+
+ADMINS: 
+  - 1317173146
+
+
+ALLOW_COMMANDS_FROM_EXC: './'
