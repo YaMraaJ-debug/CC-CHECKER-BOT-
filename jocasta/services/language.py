@@ -12,33 +12,27 @@ async def get_chat_lang(chat_id: int) -> str:
         return "en"
 
 
-LANGUAGES = {}
-
 log.info("Adding Lanuages")
 
+LANGUAGES = {}
 for filename in os.listdir("jocasta/languages"):
-    log.debug("Loading language file " + filename)
-    with open("jocasta/languages/" + filename, "r", encoding="utf8") as f:
+    log.debug(f"Loading language file {filename}")
+    with open(f"jocasta/languages/{filename}", "r", encoding="utf8") as f:
         lang = yaml.load(f, Loader=yaml.CLoader)
         lang_code = lang["language_info"]["code"]
-        log.debug("Importing {} Language Code.".format(lang_code))
+        log.debug(f"Importing {lang_code} Language Code.")
         lang["language_info"]["babel"] = Locale(lang_code)
         LANGUAGES[lang_code] = lang
 
 log.debug(
-    "Languages loaded: {}".format(
-        [
-            language["language_info"]["babel"].display_name
-            for language in LANGUAGES.values()
-        ]
-    )
+    f'Languages loaded: {[language["language_info"]["babel"].display_name for language in LANGUAGES.values()]}'
 )
 
 
 async def change_user_lang(chat_id: int, lang: str):
     print(chat_id)
-    await aioredis.set("bin_{}".format(chat_id), lang.lower())
-    return await aioredis.set("lang_{}".format(chat_id), lang.lower())
+    await aioredis.set(f"bin_{chat_id}", lang.lower())
+    return await aioredis.set(f"lang_{chat_id}", lang.lower())
 
 
 async def get_strings(chat_id, module, mas_name="STRINGS"):

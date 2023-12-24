@@ -52,41 +52,43 @@ async def check_admin_rights(
     if admin_rights[user_id]["status"] == "creator":
         return True
 
-    for permission in rights:
-        if not admin_rights[user_id][permission]:
-            return permission
-
-    return True
+    return next(
+        (
+            permission
+            for permission in rights
+            if not admin_rights[user_id][permission]
+        ),
+        True,
+    )
 
 
 
 async def get_admins_rights(chat_id, force_update=False):
-    key = "admin_cache:" + str(chat_id)
+    key = f"admin_cache:{str(chat_id)}"
     if (alist := await aioredis.get(key)) and not force_update:
         return pickle.loads(alist)
-    else:
-        alist = {}
-        admins = await bot.get_chat_administrators(chat_id)
-        for admin in admins:
-            user_id = admin["user"]["id"]
-            alist[user_id] = {
-                "status": admin["status"],
-                "admin": True,
-                "title": admin["custom_title"],
-                "anonymous": admin["is_anonymous"],
-                "can_change_info": admin["can_change_info"],
-                "can_delete_messages": admin["can_delete_messages"],
-                "can_invite_users": admin["can_invite_users"],
-                "can_restrict_members": admin["can_restrict_members"],
-                "can_pin_messages": admin["can_pin_messages"],
-                "can_promote_members": admin["can_promote_members"],
-            }
+    alist = {}
+    admins = await bot.get_chat_administrators(chat_id)
+    for admin in admins:
+        user_id = admin["user"]["id"]
+        alist[user_id] = {
+            "status": admin["status"],
+            "admin": True,
+            "title": admin["custom_title"],
+            "anonymous": admin["is_anonymous"],
+            "can_change_info": admin["can_change_info"],
+            "can_delete_messages": admin["can_delete_messages"],
+            "can_invite_users": admin["can_invite_users"],
+            "can_restrict_members": admin["can_restrict_members"],
+            "can_pin_messages": admin["can_pin_messages"],
+            "can_promote_members": admin["can_promote_members"],
+        }
 
-            with suppress(KeyError):  # Optional permissions
-                alist[user_id]["can_post_messages"] = admin["can_post_messages"]
+        with suppress(KeyError):  # Optional permissions
+            alist[user_id]["can_post_messages"] = admin["can_post_messages"]
 
-        await aioredis.set(key, pickle.dumps(alist))
-        await aioredis.expire(key, 900)
+    await aioredis.set(key, pickle.dumps(alist))
+    await aioredis.expire(key, 900)
     return alist
 
 
@@ -105,7 +107,4 @@ async def is_user_admin(chat_id, user_id):
     except:
         return False
     else:
-        if user_id in admins:
-            return True
-        else:
-            return False
+        return user_id in admins

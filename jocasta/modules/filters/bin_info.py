@@ -277,7 +277,7 @@ with open('bins/bins_dict.csv', mode='r', encoding='utf-8') as inp:
             "type": x[4],
             "level": x[5],
             "bank_name": x[6],
-            "prepaid": True if x[5] == "PREPAID" else False
+            "prepaid": x[5] == "PREPAID",
         }
         bins_dict[x[0]] = x2
 
@@ -292,7 +292,7 @@ with open('bins/bins_dict_hi.csv', mode='r', encoding='utf-8') as inp:
             "type": x[4],
             "level": x[5],
             "bank_name": x[6],
-            "prepaid": True if x[5] == "PREPAID" else False
+            "prepaid": x[5] == "PREPAID",
         }
         bins_dict_hindi[x[0]] = x2
 

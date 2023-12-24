@@ -30,7 +30,7 @@ async def shc(message, gate_info, user_info,start_time, lang):
         data = await get_cards(message.reply_to_message.text if message.reply_to_message is not None else message.text,message.from_user.id)
         assert isinstance(data, tuple), data
         cc, mes, ano, cvv = data
-        lista = cc + '|' + mes + '|' + ano + '|' + cvv 
+        lista = f'{cc}|{mes}|{ano}|{cvv}'
         bin_info = await get_bin_info(cc[:6],message.from_user.id)
         assert bin_info, lang['bin_banned']
         await msg.edit_text(lang['card_msg'].format(card=lista, name=message.from_user.first_name, id=message.from_user.id,
@@ -39,7 +39,7 @@ async def shc(message, gate_info, user_info,start_time, lang):
                                     flag=bin_info['flag'], vendor=bin_info['vendor'], level=bin_info['level'],
                                     type=bin_info['type'], role=user_info['role']), disable_web_page_preview=True)
         browser = requests.Session()
-        
+
         first = one(browser)
         assert first, lang['first_error']
         auth_token, url = first
@@ -55,12 +55,15 @@ async def shc(message, gate_info, user_info,start_time, lang):
         assert last, lang['fifth_error']
         r_text, r_logo, r_respo = get_response_shc(last)
         if 'Charged $46' in r_text:
-            await send_logs(lista + ' ' + gate_info['name'])
-            save_live(lista + ' ' + gate_info['name'])
+            await send_logs(f'{lista} ' + gate_info['name'])
+            save_live(f'{lista} ' + gate_info['name'])
             if user_info['save-ccs']:
-                await adb.users.update_one({'_id': message.from_user.id}, {'$addToSet': {'cards': lista + ' ' + gate_info['name']}})
+                await adb.users.update_one(
+                    {'_id': message.from_user.id},
+                    {'$addToSet': {'cards': f'{lista} ' + gate_info['name']}},
+                )
         elif 'Error' in r_respo:
-            await send_logs("Error in {} Gateway. uploading file....".format(gate_info['name']))
+            await send_logs(f"Error in {gate_info['name']} Gateway. uploading file....")
             gate_error(e, gate_info['name'])
             if os.path.exists(f'text_files/{gate_info["name"]}.txt'):
                 await send_logs_doc(f'text_files/{gate_info["name"]}.txt')
@@ -73,9 +76,7 @@ async def shc(message, gate_info, user_info,start_time, lang):
         await aioredis.set(f"spam_{message.from_user.id}", time.time())
     except AssertionError as aserr:
         await msg.edit_text(aserr)
-    except ConnectionError: 
-        await msg.edit_text(lang['proxy_dead'])
-    except ProxyError: 
+    except (ConnectionError, ProxyError): 
         await msg.edit_text(lang['proxy_dead'])
     except Exception as e:
         await send_logs(e)

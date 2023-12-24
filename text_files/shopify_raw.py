@@ -157,8 +157,8 @@ g_data  = {
 print(d.url)
 g = r.post(d.url, g_data)
 g_url = g.url
-h = r.get(g.url + '?from_processing_page=1')
-i = r.get(h.url + '&validate=true')
+h = r.get(f'{g.url}?from_processing_page=1')
+i = r.get(f'{h.url}&validate=true')
 # print(g.status_code)
 
 

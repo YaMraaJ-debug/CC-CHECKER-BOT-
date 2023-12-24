@@ -38,13 +38,12 @@ class IsUserAllowed(BoundFilter):
             task = m.answer if hasattr(m, "message") else m.reply
             await task(strings["no_access"])
             return False
-        elif data is False and m.chat.type != 'private':
+        elif data is False:
             if await is_chat_allowed(m.chat.id):
                 return True
-            else:
-                task = m.answer if hasattr(m, "message") else m.reply
-                await task(strings["no_groups"])
-                return False
+            task = m.answer if hasattr(m, "message") else m.reply
+            await task(strings["no_groups"])
+            return False
         else:
             task = m.answer if hasattr(m, "message") else m.reply
             await task(strings["no_access"])
@@ -59,15 +58,13 @@ class IsUserCallback(BoundFilter):
 
     @get_strings_dec("decorator_error")
     async def check(self, message, strings) -> bool:
-        if "reply_to_message" in message.message:
-            if message.from_user.id != message.message.reply_to_message.from_user.id:
-                task = message.answer if hasattr(message, "message") else message.reply
-                await task(strings["no_callback"])
-                return False
-            else:
-                return True
-        else:
+        if "reply_to_message" not in message.message:
             return True
+        if message.from_user.id == message.message.reply_to_message.from_user.id:
+            return True
+        task = message.answer if hasattr(message, "message") else message.reply
+        await task(strings["no_callback"])
+        return False
 
 
 dp.filters_factory.bind(IsUserAllowed)

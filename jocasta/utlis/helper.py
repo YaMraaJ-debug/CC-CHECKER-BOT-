@@ -15,7 +15,5 @@ from datetime import datetime
 
 
 async def get_gate_info(gate_name):
-    x = await aioredis.get('gate_{}'.format(gate_name.lower()))
-    if x:
-        return json.loads(x)
-    else: return False
+    x = await aioredis.get(f'gate_{gate_name.lower()}')
+    return json.loads(x) if x else False

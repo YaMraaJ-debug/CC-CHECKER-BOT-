@@ -12,10 +12,7 @@ from aiogram.utils.exceptions import MessageCantBeEdited, MessageToEditNotFound
 
 async def get_status(gate_name: str):
     data = await aioredis.get(f"gate_{gate_name.lower()}")
-    if data:
-        return json.loads(data)
-    else:
-        return False
+    return json.loads(data) if data else False
 
 
 def gate_info_dec(gate_name):
@@ -32,7 +29,7 @@ def gate_info_dec(gate_name):
                     await task(mess, parse_mode = 'html')
                     return
                 else:
-                    data = False if user_info['status'] == 'F' else True
+                    data = user_info['status'] != 'F'
                     if data and res['premium']:
                         with suppress(MessageCantBeEdited, MessageToEditNotFound):
                             return await func(*args, res,user_info, start_time, **kwargs)
@@ -55,6 +52,8 @@ def gate_info_dec(gate_name):
             else:
                 with suppress(MessageCantBeEdited, MessageToEditNotFound):
                     await task(strings['gate_not_found'])
-                    return 
+                    return
+
         return wrapped_1
+
     return wrapped

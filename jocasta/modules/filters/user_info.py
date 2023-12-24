@@ -10,21 +10,14 @@ from jocasta.services.mongo import adb
 @get_strings_dec('decorator_error')
 async def is_user_allowed(m, user, strings):
     if user:
-        if user['status'] == 'F':
-            return False
-        else:
-            return True
-    else:
-        task = m.answer if hasattr(m, "message") else m.reply
-        await task(strings["unknown_error"])
-        return None
+        return user['status'] != 'F'
+    task = m.answer if hasattr(m, "message") else m.reply
+    await task(strings["unknown_error"])
+    return None
 
 
 async def is_chat_allowed(chat_id: int) -> bool:
-    if await aioredis.get(f"approved_{chat_id}"):
-        return True
-    else:
-        return False
+    return bool(await aioredis.get(f"approved_{chat_id}"))
 
 
 async def get_photo_id(message) -> str:
@@ -33,8 +26,7 @@ async def get_photo_id(message) -> str:
     profile_pic = await bot.get_user_profile_photos(message.from_user.id)
     if profile_pic['total_count'] == 0:
         return 'https://te.legra.ph/file/5ae0d04d2eeaa69d53cc0.jpg'
-    else:
-        try:
-            return profile_pic['photos'][0][0]['file_id']
-        except:
-            return 'https://te.legra.ph/file/5ae0d04d2eeaa69d53cc0.jpg'
+    try:
+        return profile_pic['photos'][0][0]['file_id']
+    except:
+        return 'https://te.legra.ph/file/5ae0d04d2eeaa69d53cc0.jpg'

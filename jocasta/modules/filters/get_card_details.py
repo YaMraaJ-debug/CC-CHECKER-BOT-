@@ -10,24 +10,23 @@ async def get_cards(message: str, user_id: int):
         assert len(message) > 28, strings['card_not_found']
         res = re.findall(r"[0-9]+", message)
         assert len(res) > 3, strings['card_not_found']
-        assert len(res[0]) in [15, 16], strings['invalid_card_length']
+        assert len(res[0]) in {15, 16}, strings['invalid_card_length']
         if len(res) == 3:
-            cc = res[0]
             mes = res[1][:2]
             ano = res[1][2:]
             ano1 = res[1][2:]
             cvv = res[2]
         else:
-            cc = res[0]
             mes = res[1]
             ano = res[2]
             ano1 = res[2]
             cvv = res[3]
+        cc = res[0]
         if len(mes) > 2:
             ano = cvv
             cvv = mes
             mes = ano1
-        if int(cc[0]) in [1, 2, 7, 8, 9, 0]:
+        if int(cc[0]) in {1, 2, 7, 8, 9, 0}:
             return strings['invalid_card']
         elif len(mes) not in [1, 2] or (len(mes) == 2 and mes > '12') or (len(mes) == 2 and mes < '01') or (len(mes) == 1 and mes < '1'):
             return strings['invalid_month']
@@ -37,9 +36,9 @@ async def get_cards(message: str, user_id: int):
             return strings['invalid_cvv']
         else:
             if len(mes) == 1:
-                mes = '0' + str(mes)
+                mes = f'0{str(mes)}'
             if len(ano) == 2:
-                ano = '20' + str(ano)
+                ano = f'20{str(ano)}'
             return cc, mes, ano, cvv
     except AssertionError as aserr:
         return aserr

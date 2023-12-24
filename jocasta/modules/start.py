@@ -22,8 +22,10 @@ async def start_cmd(message, lang):
         await bot.send_chat_action(chat_id = message.chat.id , action = 'typing')
         profile_pic = await get_photo_id(message)
         text = lang['start_msg'].format(
-            name = message.first_name + ' '+ message.from_user.last_name if 'last_user' in  message.from_user else  message.from_user.first_name,
-            id = message.from_user.id,
+            name=f'{message.first_name} {message.from_user.last_name}'
+            if 'last_user' in message.from_user
+            else message.from_user.first_name,
+            id=message.from_user.id,
         )
         await message.reply_photo(profile_pic, caption = text)
     except Exception as e: 

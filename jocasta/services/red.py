@@ -34,5 +34,5 @@ try:
     loop.run_until_complete(aioredis.ping())
     log.info("REDIS STARTED..")
 except Exception as e:
-    log.warn("Error while connecting to redis. Error: {}".format(e))
+    log.warn(f"Error while connecting to redis. Error: {e}")
     sys.exit(2)

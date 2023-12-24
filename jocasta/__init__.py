@@ -33,10 +33,8 @@ if sys.version_info[0] < 3 and sys.version_info[1] > 5:
 
 BOT_TOKEN = get_str_key("BOT_TOKEN", 1)
 
-ADMINS = []
-
 OWNER_ID = get_int_key("OWNER_ID", 1)
-ADMINS.append(OWNER_ID)
+ADMINS = [OWNER_ID]
 LOG_CHAT = get_int_key("LOG_CHAT")
 SUPPORT_CHAT = get_str_key("SUPPORT_CHAT")
 SESSION_STRING = get_str_key("STRING_SESSION", 1)
@@ -65,6 +63,6 @@ USERNAME = bot_info.username
 BOT_ID = bot_info.id
 BOT_NAME = bot_info.first_name
 
-log.info("Username: @%s" % USERNAME)
-log.info("Id: %s" % BOT_ID)
-log.info("First name: %s" % BOT_NAME)
+log.info(f"Username: @{USERNAME}")
+log.info(f"Id: {BOT_ID}")
+log.info(f"First name: {BOT_NAME}")
