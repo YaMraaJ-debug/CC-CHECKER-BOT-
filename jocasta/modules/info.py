@@ -31,11 +31,28 @@ async def info(Client, message,strings, user):
 <b>{strings['chatusername']}</b>: <b>{chat_user_name}</b>
 <b>{strings['chattype']}</b>: <b>{message.reply_to_message.chat.type.title()}</b>
 """
-            await message.reply(messagetext, quote= True)
+        elif user['status'] == 'F':
+            messagetext = f"""
+<b>{strings['name']}</b>:-
+<b>{strings['firstname']}</b>: <b>{message.from_user.first_name} {lastmessage}</b>
+<b>{strings['username']}</b>: @<b>{message.from_user.username}</b>
+<b>{strings['userid']}</b>: <code>{message.from_user.id}</code>
+<b>{strings['restricted']}</b>: <b>{message.from_user.is_restricted}</b>
+<b>{strings['scamtag']}</b>: <b>{message.from_user.is_scam}</b>
+<b>{strings['fakeuser']}</b>: <b>{message.from_user.is_fake}</b>
+<b>{strings['link']}</b>: [{message.from_user.first_name}](tg://user?id={message.from_user.id})
+<b>{strings['chatid']}</b>: <code>{message.chat.id}</code>
+<b>{strings['chatname']}</b>: <b>{chat_name}</b>
+<b>{strings['plan']}</b>: <b>{user['role']} User</b>
+<b>{strings['reg_time']}</b>: <b>{user['reg-date']}</b>
+<b>{strings['antispam_time']}</b>: <b>{user['spam-time']} Sec's</b>
+<b>{strings['save_ccs']}</b>: <b>{user['save-ccs']}</b>
+<b>{strings['chatusername']}</b>: <b>{chat_user_name}</b>
+<b>{strings['chattype']}</b>: <b>{message.chat.type.title()}</b>
+"""
         else:
-            if user['status'] != 'F':
-                x = datetime.fromtimestamp(user['expiry'])
-                messagetext = f"""
+            x = datetime.fromtimestamp(user['expiry'])
+            messagetext = f"""
 <b>{strings['name']}</b>:-
 <b>{strings['firstname']}</b>: <b>{message.from_user.first_name} {lastmessage}</b>
 <b>{strings['username']}</b>: @<b>{message.from_user.username}</b>
@@ -55,26 +72,6 @@ async def info(Client, message,strings, user):
 <b>{strings['chatusername']}</b>: <b>{chat_user_name}</b>
 <b>{strings['chattype']}</b>: <b>{message.chat.type.title()}</b>
 """
-                await message.reply(messagetext, quote= True)
-            else:
-                messagetext = f"""
-<b>{strings['name']}</b>:-
-<b>{strings['firstname']}</b>: <b>{message.from_user.first_name} {lastmessage}</b>
-<b>{strings['username']}</b>: @<b>{message.from_user.username}</b>
-<b>{strings['userid']}</b>: <code>{message.from_user.id}</code>
-<b>{strings['restricted']}</b>: <b>{message.from_user.is_restricted}</b>
-<b>{strings['scamtag']}</b>: <b>{message.from_user.is_scam}</b>
-<b>{strings['fakeuser']}</b>: <b>{message.from_user.is_fake}</b>
-<b>{strings['link']}</b>: [{message.from_user.first_name}](tg://user?id={message.from_user.id})
-<b>{strings['chatid']}</b>: <code>{message.chat.id}</code>
-<b>{strings['chatname']}</b>: <b>{chat_name}</b>
-<b>{strings['plan']}</b>: <b>{user['role']} User</b>
-<b>{strings['reg_time']}</b>: <b>{user['reg-date']}</b>
-<b>{strings['antispam_time']}</b>: <b>{user['spam-time']} Sec's</b>
-<b>{strings['save_ccs']}</b>: <b>{user['save-ccs']}</b>
-<b>{strings['chatusername']}</b>: <b>{chat_user_name}</b>
-<b>{strings['chattype']}</b>: <b>{message.chat.type.title()}</b>
-"""
-                await message.reply(messagetext, quote= True)
+        await message.reply(messagetext, quote= True)
     except Exception as e:
         await send_logs(e)

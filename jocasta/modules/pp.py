@@ -27,7 +27,7 @@ async def pp(message, gate_info, user_info,start_time, lang):
         data = await get_cards(message.reply_to_message.text if message.reply_to_message is not None else message.text,message.from_user.id)
         assert isinstance(data, tuple), data
         cc, mes, ano, cvv = data
-        lista = cc + '|' + mes + '|' + ano + '|' + cvv 
+        lista = f'{cc}|{mes}|{ano}|{cvv}'
         bin_info = await get_bin_info(cc[:6],message.from_user.id)
         assert bin_info, lang['bin_banned']
         await msg.edit_text(lang['card_msg'].format(card=lista, name=message.from_user.first_name, id=message.from_user.id,
@@ -49,10 +49,13 @@ async def pp(message, gate_info, user_info,start_time, lang):
         assert c, lang['second_error']
         r_text, r_logo, r_respo = c
         if 'Charged $1' in r_text:
-            await send_logs(lista + ' ' + gate_info['name'])
-            save_live(lista + ' ' + gate_info['name'])
+            await send_logs(f'{lista} ' + gate_info['name'])
+            save_live(f'{lista} ' + gate_info['name'])
             if user_info['save-ccs']:
-                await adb.users.update_one({'_id': message.from_user.id}, {'$addToSet': {'cards': lista + ' ' + gate_info['name']}})
+                await adb.users.update_one(
+                    {'_id': message.from_user.id},
+                    {'$addToSet': {'cards': f'{lista} ' + gate_info['name']}},
+                )
         # elif 'Error' in r_respo:
         #     await send_logs("Error in {} Gateway. uploading file....".format(gate_info['name']))
         #     gate_error(e, gate_info['name'])

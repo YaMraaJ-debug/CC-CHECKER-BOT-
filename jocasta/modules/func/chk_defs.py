@@ -15,16 +15,19 @@ def one(r, token):
     protect = find_between(b.text, 'protect:"','"')
     sp = find_between(b.text, 'sp:"','"')
     if not protect or not sp: return False
-    email =str(''.join(random.choices(string.ascii_lowercase + string.digits, k = 15))) + '@gmail.com'
-    data = {
-    "email": email,
-    "plan": "price_1HwBoaLYNoSq08J0Q92yIKGh",
-    "quantity": 1,
-    "customerId": None,
-    "protect": protect,
-    "paymentMethodId": token,
-    "sp": sp
-}
+    email = (
+        ''.join(random.choices(string.ascii_lowercase + string.digits, k=15))
+        + '@gmail.com'
+    )
+        data = {
+        "email": email,
+        "plan": "price_1HwBoaLYNoSq08J0Q92yIKGh",
+        "quantity": 1,
+        "customerId": None,
+        "protect": protect,
+        "paymentMethodId": token,
+        "sp": sp
+    }
     dat = r.post('https://criticalcss.com/api/premium/signup-payment', json = data)
     return dat.json()
 

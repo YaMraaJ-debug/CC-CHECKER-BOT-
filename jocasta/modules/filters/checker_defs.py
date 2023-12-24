@@ -12,8 +12,7 @@ class Helper(object):
     
     @staticmethod
     def lista(dets):
-        arrays = re.findall(r'[0-9]+', dets)
-        return arrays
+        return re.findall(r'[0-9]+', dets)
 
 
 def save_live(text: str):
@@ -36,5 +35,4 @@ def find_between( data, first, last ):
 
 def remove_html_tags(xx):
     tag_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
-    no_tags = tag_re.sub('', xx)
-    return no_tags
+    return tag_re.sub('', xx)

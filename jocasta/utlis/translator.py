@@ -17,14 +17,12 @@ class translate(object):
         self.arg = arg
         
     @classmethod
-    def tr(self,text:str,out_lang:str = 'en',in_lang:str = 'auto') -> bool:
-        url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl={}&tl={}&dt=t&q={}'.format(in_lang, out_lang, text)
+    def tr(cls, text:str, out_lang:str = 'en', in_lang:str = 'auto') -> bool:
+        url = f'https://translate.googleapis.com/translate_a/single?client=gtx&sl={in_lang}&tl={out_lang}&dt=t&q={text}'
         result = urlopen(url)
         data = result.read().decode('utf-8')
-        self.text = find_between(data,'[[["','"')
-        if  self.text is None: return False
-        else:
-            return True
+        cls.text = find_between(data,'[[["','"')
+        return cls.text is not None
         
         
     @property

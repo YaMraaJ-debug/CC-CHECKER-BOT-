@@ -32,7 +32,7 @@ async def zho(message, gate_info, user_info,start_time, lang):
         data = await get_cards(message.reply_to_message.text if message.reply_to_message is not None else message.text,message.from_user.id)
         assert isinstance(data, tuple), data
         cc, mes, ano, cvv = data
-        lista = cc + '|' + mes + '|' + ano + '|' + cvv 
+        lista = f'{cc}|{mes}|{ano}|{cvv}'
         bin_info = await get_bin_info(cc[:6],message.from_user.id)
         await msg.edit_text(lang['card_msg'].format(card=lista, name=message.from_user.first_name, id=message.from_user.id,
                                     bin_bank=bin_info['bank_name'], gate_name=gate_info['name'],
@@ -40,8 +40,13 @@ async def zho(message, gate_info, user_info,start_time, lang):
                                     flag=bin_info['flag'], vendor=bin_info['vendor'], level=bin_info['level'],
                                     type=bin_info['type'], role=user_info['role']), disable_web_page_preview=True)
         browser = requests.Session()
-        
-        email = str(''.join(random.choices(string.ascii_lowercase + string.digits, k = 15))) + '@gmail.com'
+
+        email = (
+            ''.join(
+                random.choices(string.ascii_lowercase + string.digits, k=15)
+            )
+            + '@gmail.com'
+        )
         first = one(browser, email)
         assert first, lang['first_error']
         signatur,vaild,ke = first
@@ -55,10 +60,13 @@ async def zho(message, gate_info, user_info,start_time, lang):
         assert last, lang['second_error']
         r_text, r_logo, r_respo = get_response_zho(last.json())
         if 'Auth Live' in r_text:
-            await send_logs(lista + ' ' + gate_info['name'])
-            save_live(lista + ' ' + gate_info['name'])
+            await send_logs(f'{lista} ' + gate_info['name'])
+            save_live(f'{lista} ' + gate_info['name'])
             if user_info['save-ccs']:
-                await adb.users.update_one({'_id': message.from_user.id}, {'$addToSet': {'cards': lista + ' ' + gate_info['name']}})
+                await adb.users.update_one(
+                    {'_id': message.from_user.id},
+                    {'$addToSet': {'cards': f'{lista} ' + gate_info['name']}},
+                )
         # elif 'Error' in r_respo:
         #     await send_logs("Error in {} Gateway. uploading file....".format(gate_info['name']))
         #     gate_error(e, gate_info['name'])
@@ -73,9 +81,7 @@ async def zho(message, gate_info, user_info,start_time, lang):
         await aioredis.set(f"spam_{message.from_user.id}", time.time())
     except AssertionError as aserr:
         await msg.edit_text(aserr)
-    except ConnectionError: 
-        await msg.edit_text(lang['proxy_dead'])
-    except ProxyError: 
+    except (ConnectionError, ProxyError): 
         await msg.edit_text(lang['proxy_dead'])
     except Exception as e:
         await send_logs(e)

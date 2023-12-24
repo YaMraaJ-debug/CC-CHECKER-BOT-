@@ -30,7 +30,7 @@ async def chk(message, user_info, lang):
         assert 'key' in user_info, lang['no_ccs']
         assert len(user_info['key']) > 0, lang['no_ccs']
         keys = [f'`{str(i)}`' for i in user_info['key']]
-        assert len(keys) > 0, lang['no_ccs']
+        assert keys, lang['no_ccs']
         await msg.edit_text(lang['msg'].format(keys='\n'.join(keys), name = message.from_user.first_name, id = message.from_user.id, role =user_info['role']), disable_web_page_preview= True)
     except AssertionError as ae:
         await msg.edit_text(ae)

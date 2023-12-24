@@ -10,10 +10,7 @@ db = adb.chat_settings
 
 
 async def get_chat_info(chat_id: int):
-    if (data := await db.find_one({'_id': chat_id})):
-        return data
-    else:
-        return None
+    return data if (data := await db.find_one({'_id': chat_id})) else None
 
 
 async def set_chat_info(data: dict, chat_id: int):
@@ -40,22 +37,20 @@ async def chat_info(message):
     else:
         res = res
 
+
+
     class Strings:
         @staticmethod
         def chat_info(name, res):
-            if name in res:
-                return res
-            else:
-                return {}
+            return res if name in res else {}
 
         def user_info(self, name):
             data = self.chat_info(name, res)
-            if name not in data:
-                return {}
-            return data
+            return {} if name not in data else data
 
         def __getitem__(self, key):
             return self.user_info(key)
+
 
     return Strings()
 

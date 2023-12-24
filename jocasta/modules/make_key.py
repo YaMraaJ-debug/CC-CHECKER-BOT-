@@ -19,7 +19,7 @@ async def make_key(message, lang, user):
         assert len(data) < 4, lang['no_days']
         assert (data[1].isdigit() or data[1].lower() == "test") and data[1] != "0",lang['no_days']
         # assert len(data) > 3 and data[2] < 30,lang['no_days']
-        key = 'JOCASTA-' + str(randint(3000,5000)) +'-'+ str(randint(1000,9999)) +'-'+ str(randint(1000,9999)) +'-'+ str(randint(1000,9999))
+        key = f'JOCASTA-{str(randint(3000, 5000))}-{str(randint(1000, 9999))}-{str(randint(1000, 9999))}-{str(randint(1000, 9999))}'
         antispam_time = int(data[2]) if len(data) == 3 and data[2].isdigit() else 30
         post_data = {
         '_id': key,

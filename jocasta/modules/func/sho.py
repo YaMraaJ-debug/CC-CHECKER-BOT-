@@ -4,9 +4,7 @@ from .rand_user import random_user_api
 def sho_one(requests):
     cookie = requests.get('https://thursdayboots.com/products/gift-cards')
     x = random_user_api.find_between(cookie.text,'variantId":',',')
-    if not x: return False
-    else:
-        return x
+    return False if not x else x
 
 
 def sho_two(requests, x) -> bool:
@@ -26,44 +24,43 @@ def sho_three(requests, authenticity_token):
     two = requests.get('https://thursdayboots.com/checkout')
     url = two.url
     if not url: return False
-    json_three = {
-'_method': 'patch',
-'authenticity_token': authenticity_token,
-'previous_step': 'contact_information',
-'step': 'payment_method',
-'checkout[email]': 'roldexstartgh@metalunits.com',
-'checkout[billing_address][first_name]': 'martin',
-'checkout[billing_address][last_name]': 'York',
-'checkout[billing_address][address1]': '3 allen street',
-'checkout[billing_address][address2]': '',
-'checkout[billing_address][city]': 'New York',
-'checkout[billing_address][country]': 'US',
-'checkout[billing_address][province]': 'New York',
-'checkout[billing_address][zip]': '10002',
-'checkout[billing_address][phone]': '+1 02259383093',
-'checkout[billing_address][first_name]': 'martin',
-'checkout[billing_address][last_name]': 'York',
-'checkout[billing_address][address1]': '3 allen street',
-'checkout[billing_address][address2]': '',
-'checkout[billing_address][city]': 'New York',
-'checkout[billing_address][country]': 'United States',
-'checkout[billing_address][province]': 'NY',
-'checkout[billing_address][zip]': '10002',
-'checkout[billing_address][phone]': '2259383093',
-'checkout[remember_me]': '',
-'checkout[remember_me]': '0',
-'checkout[client_details][browser_width]': '674',
-'checkout[client_details][browser_height]': '667',
-'checkout[client_details][javascript_enabled]': '1',
-'checkout[client_details][color_depth]': '24',
-'checkout[client_details][java_enabled]': 'false',
-'checkout[client_details][browser_tz]': '-330',
-'button': '',
-}
+        json_three = {
+    '_method': 'patch',
+    'authenticity_token': authenticity_token,
+    'previous_step': 'contact_information',
+    'step': 'payment_method',
+    'checkout[email]': 'roldexstartgh@metalunits.com',
+    'checkout[billing_address][first_name]': 'martin',
+    'checkout[billing_address][last_name]': 'York',
+    'checkout[billing_address][address1]': '3 allen street',
+    'checkout[billing_address][address2]': '',
+    'checkout[billing_address][city]': 'New York',
+    'checkout[billing_address][country]': 'US',
+    'checkout[billing_address][province]': 'New York',
+    'checkout[billing_address][zip]': '10002',
+    'checkout[billing_address][phone]': '+1 02259383093',
+    'checkout[billing_address][first_name]': 'martin',
+    'checkout[billing_address][last_name]': 'York',
+    'checkout[billing_address][address1]': '3 allen street',
+    'checkout[billing_address][address2]': '',
+    'checkout[billing_address][city]': 'New York',
+    'checkout[billing_address][country]': 'United States',
+    'checkout[billing_address][province]': 'NY',
+    'checkout[billing_address][zip]': '10002',
+    'checkout[billing_address][phone]': '2259383093',
+    'checkout[remember_me]': '',
+    'checkout[remember_me]': '0',
+    'checkout[client_details][browser_width]': '674',
+    'checkout[client_details][browser_height]': '667',
+    'checkout[client_details][javascript_enabled]': '1',
+    'checkout[client_details][color_depth]': '24',
+    'checkout[client_details][java_enabled]': 'false',
+    'checkout[client_details][browser_tz]': '-330',
+    'button': '',
+    }
 
     three = requests.post(url, data = json_three)
-    if three.status_code != 200: return False
-    return url
+    return False if three.status_code != 200 else url
 
 
 def sho_four(requests, cc, mes, ano, cvv, random_user):

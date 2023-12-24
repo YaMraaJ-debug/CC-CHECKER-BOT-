@@ -25,16 +25,16 @@ async def add_gate(message, lang):
         if await get_status(data[1].lower()):
             await msg.edit_text(lang['already_found'])
         else:
-            is_premium = False if len(data) == 3 else True
+            is_premium = len(data) != 3
             data_to_post = {
-"status": "✅",
-"name": data[2].title(),
-"premium": is_premium,
-"user_id": message.from_user.id,
-"is_closed": False,
-"date": datetime.today().strftime('%Y-%m-%d'),
+                "status": "✅",
+                "name": data[2].title(),
+                "premium": is_premium,
+                "user_id": message.from_user.id,
+                "is_closed": False,
+                "date": datetime.now().strftime('%Y-%m-%d'),
             }
-            data_to_post_str = json.dumps(data_to_post)  
+            data_to_post_str = json.dumps(data_to_post)
             res = await aioredis.set(f"gate_{data[1].lower()}", data_to_post_str)
             if res:
                 await msg.edit_text(lang['success'])
@@ -60,7 +60,7 @@ async def add_gate(message, lang):
         else:
             dat1 = dat
             dat1['is_closed'] = False
-            dat1['date'] = datetime.today().strftime('%Y-%m-%d')
+            dat1['date'] = datetime.now().strftime('%Y-%m-%d')
             dat1["user_id"] = message.from_user.id
             dat1['status'] = TICK
             dat1.pop('reason')
@@ -108,14 +108,14 @@ async def close_gate(message, lang):
         data = data1[0].split(' ')
         assert len(data) == 2, lang['error']
         dat = await get_gate_info(data[1])
-        if not dat :
-                await msg.edit_text(lang['gate_not_found'])
+        if not dat:
+            await msg.edit_text(lang['gate_not_found'])
         elif dat['is_closed']:
             await msg.edit_text(lang['already_closed'])
         else:
             dat1 = dat
             dat1['is_closed'] = True
-            dat1['date'] = datetime.today().strftime('%Y-%m-%d')
+            dat1['date'] = datetime.now().strftime('%Y-%m-%d')
             dat1["user_id"] = message.from_user.id
             dat1['status'] = '❌'
             dat1['reason'] = data1[1]
@@ -145,19 +145,18 @@ async def free_gate(message, lang):
         dat = await get_gate_info(data[1])
         if dat and not dat['premium']:
             await msg.edit_text(lang['already_free'])
-        else:
-            if not dat :
-                await msg.edit_text(lang['gate_not_found'])
+        elif dat:
+            dat1 = dat
+            dat1['premium'] = False
+            dat1['date'] = datetime.now().strftime('%Y-%m-%d')
+            dat1["user_id"] = message.from_user.id
+            check = await aioredis.set(f"gate_{data[1].lower()}", json.dumps(dat1))
+            if check:
+                await msg.edit_text(lang['success'])
             else:
-                dat1 = dat
-                dat1['premium'] = False
-                dat1['date'] = datetime.today().strftime('%Y-%m-%d')
-                dat1["user_id"] = message.from_user.id
-                check = await aioredis.set(f"gate_{data[1].lower()}", json.dumps(dat1))
-                if check:
-                    await msg.edit_text(lang['success'])
-                else:
-                    await msg.edit_text(lang['gate_not_found'])
+                await msg.edit_text(lang['gate_not_found'])
+        else:
+            await msg.edit_text(lang['gate_not_found'])
     except AssertionError as err:
         await msg.edit_text(err)
     except Exception as ex:
@@ -178,19 +177,18 @@ async def paid_gate(message, lang):
         dat = await get_gate_info(data[1])
         if dat and dat['premium']:
             await msg.edit_text(lang['already_free'])
-        else:
-            if not dat:
-                await msg.edit_text(lang['gate_not_found'])
+        elif dat:
+            dat1 = dat
+            dat1['premium'] = True
+            dat1['date'] = datetime.now().strftime('%Y-%m-%d')
+            dat1["user_id"] = message.from_user.id
+            check = await aioredis.set(f"gate_{data[1].lower()}", json.dumps(dat1))
+            if check:
+                await msg.edit_text(lang['success'])
             else:
-                dat1 = dat
-                dat1['premium'] = True
-                dat1['date'] = datetime.today().strftime('%Y-%m-%d')
-                dat1["user_id"] = message.from_user.id
-                check = await aioredis.set(f"gate_{data[1].lower()}", json.dumps(dat1))
-                if check:
-                    await msg.edit_text(lang['success'])
-                else:
-                    await msg.edit_text(lang['gate_not_found'])
+                await msg.edit_text(lang['gate_not_found'])
+        else:
+            await msg.edit_text(lang['gate_not_found'])
     except AssertionError as err:
         await msg.edit_text(err)
     except Exception as ex:

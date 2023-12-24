@@ -66,20 +66,20 @@ def three(s,check):
     url = f'https://platform.funraise.io/api/v2/transaction/{check}'
     headers = {
         'authority': 'platform.funraise.io',
-    'method': 'GET',
-    'path': '/api/v2/transaction/'+check+'',
-    'scheme': 'https',
-    'accept': 'application/json',
-    'accept-language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
-    'origin': 'https://assets.funraise.io',
-    'referer': 'https://assets.funraise.io/',
-    'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': '"Windows"',
-    'sec-fetch-dest': 'empty',
-    'sec-fetch-mode': 'cors',
-    'sec-fetch-site': 'same-site',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36'
+        'method': 'GET',
+        'path': f'/api/v2/transaction/{check}',
+        'scheme': 'https',
+        'accept': 'application/json',
+        'accept-language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5',
+        'origin': 'https://assets.funraise.io',
+        'referer': 'https://assets.funraise.io/',
+        'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-site',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
     }
     resp = s.get(headers=headers, url=url)
     result = resp.text

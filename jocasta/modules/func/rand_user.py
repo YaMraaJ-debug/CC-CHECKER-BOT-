@@ -18,14 +18,14 @@ class random_user_api(object):
     def __init__(self, country_code = None, *args):
         super(random_user_api, self).__init__(*args)
         characters = list(string.ascii_letters + string.digits + "!@#$%&*()")
-        self.password = str(''.join(random.choices(characters, k = 10)))
-        self.email = str(''.join(random.choices(string.ascii_lowercase + string.digits, k = 15))) + '@gmail.com'
+        self.password = ''.join(random.choices(characters, k = 10))
+        self.email = (
+            ''.join(random.choices(string.ascii_lowercase + string.digits, k=15))
+            + '@gmail.com'
+        )
         # self.password = random.choice(string.ascii_letters + string.digits + "!@#$%^&*()", k=15)
         if country_code is not None:
-            if country_code.upper() in self.arr:
-                self.nat = country_code
-            else:
-                self.nat = 'US'
+            self.nat = country_code if country_code.upper() in self.arr else 'US'
         else: self.nat = 'US'
     def get_state(self):
         states = {
@@ -91,17 +91,25 @@ class random_user_api(object):
         second = str(random.randint(1,888)).zfill(3)
 
         last = (str(random.randint(1,9998)).zfill(4))
-        while last in ['1111','2222','3333','4444','5555','6666','7777','8888']:
+        while last in {
+            '1111',
+            '2222',
+            '3333',
+            '4444',
+            '5555',
+            '6666',
+            '7777',
+            '8888',
+        }:
             last = (str(random.randint(1,9998)).zfill(4))
-        return '{}-{}-{}'.format(first,second, last)
+        return f'{first}-{second}-{last}'
     
-    def get_random_string(length):
+    def get_random_string(self):
         letters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        result_str = ''.join(random.choice(letters) for i in range(length))
-        return result_str
+        return ''.join(random.choice(letters) for _ in range(length))
     
     
-    def find_between( data, first, last ):
+    def find_between(self, first, last):
         """Get middle text from  full text
 
         Args:
@@ -113,18 +121,15 @@ class random_user_api(object):
             [str]: [return middle text of first and last text]
         """
         try:
-            start = data.index( first ) + len( first )
-            end = data.index( last, start )
-            return data[start:end]
+            start = self.index(first) + len( first )
+            end = self.index(last, start)
+            return self[start:end]
         except ValueError:
             return False
     
     def get_random_user_info(self) -> object:
         self.url = 'https://randomuser.me/api/?password=special,lower,upper,number,1-20'
-        if self.nat:
-            url = self.url + "&nat={}".format(self.nat)
-        else:
-            url = self.url
+        url = f"{self.url}&nat={self.nat}" if self.nat else self.url
         result = urlopen(url)
         data = result.read().decode('utf-8')
         data = json.loads(data)
@@ -135,11 +140,11 @@ class random_user_api(object):
         self.title =  data['results'][0]['name']['title']
         self.first_name =  data['results'][0]['name']['first']
         self.last_name =  data['results'][0]['name']['last']
-        self.name_with_title = self.title + " "+ self.first_name + " "+ self.last_name
-        self.name = self.first_name + " "+ self.last_name
+        self.name_with_title = f"{self.title} {self.first_name} {self.last_name}"
+        self.name = f"{self.first_name} {self.last_name}"
         self.street_number =  data['results'][0]['location']['street']['number']
         self.street_name =  data['results'][0]['location']['street']['name']
-        self.street = str(self.street_number) + " " + self.street_name
+        self.street = f"{str(self.street_number)} {self.street_name}"
         self.city =  data['results'][0]['location']['city']
         self.state =  data['results'][0]['location']['state']
         self.country =  data['results'][0]['location']['country']

@@ -6,12 +6,7 @@ import motor.motor_asyncio
 from pymongo import MongoClient
 import asyncio
 
-if (name:= get_str_key("MONGO_DB",1)):
-    database_name = name
-else:
-    database_name = "bot"
-    
-
+database_name = name if (name:= get_str_key("MONGO_DB",1)) else "bot"
 # mongo = MongoClient(
 #     get_str_key('MONGO_URL',1)
 # )

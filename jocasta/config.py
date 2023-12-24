@@ -14,7 +14,7 @@ if os.name == "nt":
     CONFIG_PATH = os.getcwd() + '\\jocasta\\configs\\bot_conf.yaml'
     log.info("Using Windows Config Path.")
 else:
-    CONFIG_PATH = os.getcwd() + '/jocasta/configs/bot_conf.yaml'
+    CONFIG_PATH = f'{os.getcwd()}/jocasta/configs/bot_conf.yaml'
     log.info("Using Linux Config Path.")
 
 
@@ -27,10 +27,10 @@ if os.path.isfile(CONFIG_PATH):
 def get_bool_key(name, req = False):
     DEFAULT = ALL_USER_DATA[name] if name in ALL_USER_DATA else None
     if not (data := env.bool(name, default = DEFAULT)) and not req:
-        log.warn("%s not found"% name)
+        log.warn(f"{name} not found")
         return None
     elif not data and req:
-        log.warn("%s not found"% name)
+        log.warn(f"{name} not found")
         exit()
     else:
         return data
@@ -48,10 +48,10 @@ def get_str_key(name, req = False):
     """
     DEFAULT = ALL_USER_DATA[name] if name in ALL_USER_DATA else None
     if not (data := env.str(name, default = DEFAULT)) and not req:
-        log.warn("%s not found"% name)
+        log.warn(f"{name} not found")
         return None
     elif not data and req:
-        log.warn("%s not found"% name)
+        log.warn(f"{name} not found")
         exit()
     else:
         return data
@@ -68,10 +68,10 @@ def get_int_key(name, req = False):
     """
     DEFAULT = ALL_USER_DATA[name] if name in ALL_USER_DATA else None
     if not (data := env.int(name, default = DEFAULT)) and not req:
-        log.warn("%s not found"% name)
+        log.warn(f"{name} not found")
         return None
     elif not data and not req:
-        log.warn("%s not found"% name)
+        log.warn(f"{name} not found")
         exit()
     else:
         return data
@@ -80,10 +80,10 @@ def get_int_key(name, req = False):
 def get_list_key(name, req = False):
     DEFAULT = ALL_USER_DATA[name] if name in ALL_USER_DATA else None
     if not (data := env.list(name, default = DEFAULT)) and not req:
-        log.warn("%s not found"% name)
+        log.warn(f"{name} not found")
         return None
     elif not data and not req:
-        log.warn("%s not found"% name)
+        log.warn(f"{name} not found")
         exit()
     else:
         return data

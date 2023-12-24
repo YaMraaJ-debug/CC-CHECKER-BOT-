@@ -43,7 +43,7 @@ async def scrapper(message, lang, user):
                 cvv = str(res[1])
                 mes = str(res[2])
                 ano = str(res[3])
-            data_save = str(cc + "|" + mes + "|" + ano + "|" + cvv + '\n')
+            data_save = str(f"{cc}|{mes}|{ano}|{cvv}" + '\n')
             file.write(data_save)
             length += 1
         if length > 0:

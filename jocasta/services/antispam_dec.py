@@ -8,11 +8,7 @@ import json
 
 async def get_spam_time(user_id: int):
     data = await aioredis.get(f"spam_{user_id}")
-    if data is not None:
-        data_int = int(float(data))
-        return data_int
-    else:
-        return None
+    return int(float(data)) if data is not None else None
 
 
 def get_spam_dec():

@@ -15,8 +15,8 @@ COMMANDS_ALIASES = {}
 
 log.info("Filters to load: %s", str(ALL_FILTERS))
 for module_name in ALL_FILTERS:
-    log.info("Importing " + module_name)
-    imported_module = import_module("jocasta.utlis.filters." + module_name)
+    log.info(f"Importing {module_name}")
+    imported_module = import_module(f"jocasta.utlis.filters.{module_name}")
 log.info("Filters loaded!")
 
 
@@ -35,8 +35,8 @@ def register(*args, cmds=None, f=None, allow_edited=True, allow_kwargs=False, **
             REGISTRED_COMMANDS.append(cmd)
             regex += cmd
 
-            if not idx == len(cmds) - 1:
-                if not cmds[0] in COMMANDS_ALIASES:
+            if idx != len(cmds) - 1:
+                if cmds[0] not in COMMANDS_ALIASES:
                     COMMANDS_ALIASES[cmds[0]] = [cmds[idx + 1]]
                 else:
                     COMMANDS_ALIASES[cmds[0]].append(cmds[idx + 1])
@@ -64,7 +64,7 @@ def register(*args, cmds=None, f=None, allow_edited=True, allow_kwargs=False, **
     elif f == "any":
         register_kwargs["content_types"] = types.ContentTypes.ANY
 
-    log.debug(f"Registered new handler: <d><n>{str(register_kwargs)}</></>")
+    log.debug(f"Registered new handler: <d><n>{register_kwargs}</></>")
 
     register_kwargs.update(kwargs)
 
@@ -77,7 +77,7 @@ def register(*args, cmds=None, f=None, allow_edited=True, allow_kwargs=False, **
 
             if allow_kwargs is False:
                 def_kwargs = dict()
-            
+
             await func(*def_args, **def_kwargs)
             raise SkipHandler()
 

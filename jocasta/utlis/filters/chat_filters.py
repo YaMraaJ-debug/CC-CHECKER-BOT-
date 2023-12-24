@@ -13,7 +13,7 @@ class OnlyPM(BoundFilter):
         self.only_pm = only_pm
 
     async def check(self, message: types.Message) -> bool:
-        return bool(message.from_user.id == message.chat.id)
+        return message.from_user.id == message.chat.id
 
 
 class OnlyGP(BoundFilter):
@@ -23,7 +23,7 @@ class OnlyGP(BoundFilter):
         self.only_gp = only_gp
 
     async def check(self, message: types.Message) -> bool:
-        if not message.from_user.id == message.chat.id:
+        if message.from_user.id != message.chat.id:
             return True
 
 class IsAdmin(BoundFilter):
@@ -35,11 +35,7 @@ class IsAdmin(BoundFilter):
     @get_strings_dec("global")
     async def check(self, event, strings):
 
-        if hasattr(event, "message"):
-            chat_id = event.message.chat.id
-        else:
-            chat_id = event.chat.id
-
+        chat_id = event.message.chat.id if hasattr(event, "message") else event.chat.id
         if not await is_user_admin(chat_id, event.from_user.id):
             task = event.answer if hasattr(event, "message") else event.reply
             await task(strings["u_not_admin"])
@@ -160,10 +156,7 @@ class new_chat_participant(BoundFilter):
         self.new_chat_participant = new_chat_participant
 
     async def check(self, m: types.Message) -> bool:
-        if "new_chat_participant" in m:
-            return True
-        else:
-            return False
+        return "new_chat_participant" in m
 
 
 class left_chat_participant(BoundFilter):
@@ -173,10 +166,7 @@ class left_chat_participant(BoundFilter):
         self.left_chat_participant = left_chat_participant
 
     async def check(self, m: types.Message) -> bool:
-        if "left_chat_members" in m:
-            return True
-        else:
-            return False
+        return "left_chat_members" in m
 
 
 

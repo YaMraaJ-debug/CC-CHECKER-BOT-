@@ -10,36 +10,30 @@ from jocasta.services.language import get_strings
 
 
 async def get_user_info(chat_id: int):
-    if (data := await adb.users.find_one({'_id': chat_id})):
-        return data
-    else:
-        return None
+    return data if (data := await adb.users.find_one({'_id': chat_id})) else None
 
 
 async def set_user_info(data: dict, chat_id: int):
     x = await adb.users.insert_one(data)
-    if x:
-        return await get_user_info(chat_id)
-    else: return None
+    return await get_user_info(chat_id) if x else None
 
 
 async def user_infos(message):
     
     data = message.message if hasattr(message, "message") else message
-    user_id = data.from_user.id 
+    user_id = data.from_user.id
     if (res := await get_user_info(user_id)) is None:
         data = {
-        '_id': user_id,
-        'username': data.from_user.username,
-        'reg-date': datetime.today().strftime('%Y-%m-%d'),
-        'status': 'F',
-        'spam-time': 60,
-        'antispam': True,
-        'save-ccs': True,
-        'role': 'Free',
-        'warn': 0,
-        
-    }
+            '_id': user_id,
+            'username': data.from_user.username,
+            'reg-date': datetime.now().strftime('%Y-%m-%d'),
+            'status': 'F',
+            'spam-time': 60,
+            'antispam': True,
+            'save-ccs': True,
+            'role': 'Free',
+            'warn': 0,
+        }
         if (check := await set_user_info(data, user_id)) is None:
             strings = await get_strings(message.message.from_user.id if hasattr(message, "message") else message.from_user.id,"decorator_error")
             task = message.answer if hasattr(message, "message") else message.reply

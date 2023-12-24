@@ -22,7 +22,7 @@ log.info("Modules to load: %s", str(modules))
 
 for module_name in modules:
     log.debug(f"Importing <d><n>{module_name}</></>")
-    imported_module = import_module("jocasta.modules." + module_name)
+    imported_module = import_module(f"jocasta.modules.{module_name}")
     if hasattr(imported_module, "__help__"):
         if hasattr(imported_module, "__mod_name__"):
             MOD_HELP[imported_module.__mod_name__] = imported_module.__help__

@@ -24,14 +24,13 @@ async def redeem(message, lang, user):
         if user['status'] == "P":
             if data['days'] == "test":
                 await msg.edit_text(lang['cant_claim_test_keys'])
-                await adb.keys.delete_one({"_id": data['key']})
             else:
                 exp = int(data["days"]) * 86400 #days into seconds
                 expiry = int(time()) + int(exp)
                 expiry = int(user['expiry']) + int(expiry)
                 expiry_days = int(user['expiry_days']) + int(data['days'])
                 days_left = f"{expiry_days} Days"
-                currenttime =datetime.today().strftime('%Y-%m-%d')
+                currenttime = datetime.now().strftime('%Y-%m-%d')
                 a2s = data['key'] + str(expiry_days) + ' '+ ' Days ' +  currenttime
                 new_dict = {
                     "$addToSet": {
@@ -59,11 +58,11 @@ async def redeem(message, lang, user):
                 else:
                     text = lang['error']
                 await msg.edit_text(text)
-                await adb.keys.delete_one({"_id": data['key']})
+            await adb.keys.delete_one({"_id": data['key']})
         else:
             if data['days']  ==  "test":
-                exp = 600 
-                expiry = int(time()) + int(exp)
+                exp = 600
+                expiry = int(time()) + exp
                 days_left = "10 Minutes"
                 expiry_days = 0
             else:
@@ -71,21 +70,18 @@ async def redeem(message, lang, user):
                 expiry = int(time()) + int(exp)
                 expiry_days = int(data['days'])
                 days_left = f"{data['days']} Days"
-            currenttime =datetime.today().strftime('%Y-%m-%d')
+            currenttime = datetime.now().strftime('%Y-%m-%d')
             a2s = data['key'] + str(expiry_days) + ' '+ ' Days ' +  currenttime
-            new_dict = { 
-                "$addToSet": {
-                    "key": a2s
+            new_dict = {
+                "$addToSet": {"key": a2s},
+                '$set': {
+                    "status": 'P',
+                    "expiry": int(expiry),
+                    "role": "Premium",
+                    "expiry_days": expiry_days,
+                    'spam-time': data['spam-time'],
+                    'redeem-time': currenttime,
                 },
-                '$set':
-                    {
-                        "status": 'P',
-                        "expiry": int(expiry),
-                        "role": "Premium",
-                        "expiry_days": int(expiry_days),
-                        'spam-time': data['spam-time'],
-                        'redeem-time': currenttime
-                    }
             }
             x = await adb.users.update_one({'_id': message.from_user.id}, new_dict)
             if x:

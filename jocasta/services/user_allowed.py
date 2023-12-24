@@ -25,16 +25,15 @@ async def user_infos_allowed(message):
     user_info = await user_infos(message)
     strings = await get_strings(message.message.from_user.id if hasattr(message, "message") else message.from_user.id,"decorator_error")
     task = message.answer if hasattr(message, "message") else message.reply
-    data = False if user_info['status'] == 'F' else True
+    data = user_info['status'] != 'F'
     if not data and message.chat.type == 'private':
         await task(strings["no_access"])
         return False
-    elif not data and message.chat.type != 'private':
+    elif not data:
         if await is_chat_allowed(message.chat.id):
             return True
-        else:
-            await task(strings["no_groups"])
-            return False
+        await task(strings["no_groups"])
+        return False
     else:
         return True
 
